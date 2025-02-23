@@ -35,8 +35,8 @@ class UltrasoundPreprocessor:
                 A.RandomBrightnessContrast(p=1),
                 A.RandomGamma(p=1),
             ], p=0.5),
-            A.GaussNoise(var_limit=(10.0, 50.0), p=0.5),
-            A.ElasticTransform(alpha=120, sigma=120 * 0.05, alpha_affine=120 * 0.03, p=0.3),
+            A.GaussNoise(p=0.5),
+            A.ElasticTransform(alpha=120, sigma=6, p=0.3),
         ])
         
         # Normalization as final step

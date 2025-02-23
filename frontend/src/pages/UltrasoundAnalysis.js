@@ -1,72 +1,130 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function UltrasoundAnalysis() {
-  return (
-    <div className="min-h-screen bg-white">
-      <motion.section 
-        className="pt-32 pb-16 px-6"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="max-w-7xl mx-auto">
-          <motion.h1 
-            className="text-5xl font-bold text-primary mb-8"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            AI-Powered Ultrasound Analysis
-          </motion.h1>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <motion.div 
-              className="space-y-6"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
-              <h2 className="text-3xl font-semibold text-gray-800">Advanced Technology for Accurate Measurements</h2>
-              <p className="text-lg text-gray-600">
-                Our AI-powered ultrasound analysis system provides precise cervical measurements using
-                state-of-the-art machine learning algorithms. Get accurate results within minutes of uploading
-                your ultrasound images.
-              </p>
-              <ul className="space-y-4">
-                <li className="flex items-start">
-                  <span className="text-primary text-xl mr-2">•</span>
-                  <span>Real-time cervical length measurements</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary text-xl mr-2">•</span>
-                  <span>Automated detection of key anatomical markers</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary text-xl mr-2">•</span>
-                  <span>Historical trend analysis and reporting</span>
-                </li>
-              </ul>
-            </motion.div>
+  const location = useLocation();
+  const navigate = useNavigate();
+  const result = location.state?.result;
 
-            <motion.div 
-              className="relative"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.6 }}
-            >
-              <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-2xl">
-                <img 
-                  src="/images/ultrasound-analysis-demo.jpg" 
-                  alt="Ultrasound Analysis Demo"
-                  className="object-cover"
-                />
+  if (!result) {
+    return (
+      <div className="container mx-auto px-4 py-8 mt-16 text-center">
+        <h2 className="text-2xl font-bold text-gray-800">No analysis data available</h2>
+        <button
+          onClick={() => navigate('/upload-ultrasound')}
+          className="mt-4 bg-primary text-white px-6 py-2 rounded-lg"
+        >
+          Upload New Image
+        </button>
+      </div>
+    );
+  }
+
+  const formatTimestamp = (timestamp) => {
+    return new Date(timestamp).toLocaleString();
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-8 mt-16">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-4xl mx-auto"
+      >
+        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+          Ultrasound Analysis Results
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* AI Predictions */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-lg shadow-xl p-6"
+          >
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              AI Analysis
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <p className="text-gray-600">Dilation Stage</p>
+                <p className="text-2xl font-bold text-primary">
+                  {result.class_prediction} cm
+                </p>
               </div>
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-primary/10 rounded-full" />
+              <div>
+                <p className="text-gray-600">Precise Measurement</p>
+                <p className="text-2xl font-bold text-primary">
+                  {result.precise_prediction} cm
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Sensor Data */}
+          {result.sensor_data && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-white rounded-lg shadow-xl p-6"
+            >
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                Sensor Readings
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-gray-600">Pressure</p>
+                  <p className="text-2xl font-bold text-primary">
+                    {result.sensor_data.pressure_mmHg} mmHg
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Stretch</p>
+                  <p className="text-2xl font-bold text-primary">
+                    {result.sensor_data.stretch_mm} mm
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Temperature</p>
+                  <p className="text-2xl font-bold text-primary">
+                    {result.sensor_data.temperature_C}°C
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Reading Time</p>
+                  <p className="text-sm text-gray-500">
+                    {formatTimestamp(result.sensor_data.sensor_timestamp)}
+                  </p>
+                </div>
+              </div>
             </motion.div>
-          </div>
+          )}
         </div>
-      </motion.section>
+
+        {/* Action Buttons */}
+        <div className="mt-8 flex justify-center space-x-4">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate('/upload-ultrasound')}
+            className="bg-primary text-white px-6 py-3 rounded-lg font-semibold"
+          >
+            Upload Another Image
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate('/dilation-tracker')}
+            className="bg-secondary text-white px-6 py-3 rounded-lg font-semibold"
+          >
+            View Dilation History
+          </motion.button>
+        </div>
+      </motion.div>
     </div>
   );
 }

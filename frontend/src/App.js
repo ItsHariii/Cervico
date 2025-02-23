@@ -8,6 +8,7 @@ import UltrasoundAnalysis from "./pages/UltrasoundAnalysis";
 import HealthTracking from "./pages/HealthTracking";
 import HealthMonitoring from "./pages/HealthMonitoring";
 import Community from "./pages/Community";
+import Result from './pages/Result';
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,6 +23,7 @@ export default function App() {
     { name: "Home", path: "/" },
     { name: "Upload Ultrasound", path: "/upload-ultrasound" },
     { name: "Dilation Tracker", path: "/dilation-tracker" },
+    { name: "Health Tracking", path: "/health-tracking" },
     { name: "Community", path: "/community" }
   ];
 
@@ -88,6 +90,9 @@ export default function App() {
                 <Link to="/dilation-tracker" className="nav-link">Dilation Tracker</Link>
               </li>
               <li>
+                <Link to="/health-tracking" className="nav-link">Health Tracking</Link>
+              </li>
+              <li>
                 <Link to="/community" className="nav-link">Community</Link>
               </li>
             </ul>
@@ -102,6 +107,7 @@ export default function App() {
           <Route path="/health-tracking" element={<HealthTracking />} />
           <Route path="/health-monitoring" element={<HealthMonitoring />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/result" element={<Result />} />
         </Routes>
 
         {/* Footer */}
@@ -156,17 +162,26 @@ function HomePage() {
   const careCategories = [
     {
       id: 'pregnancy-guide',
-      title: "Pregnancy Health Guide",
+      title: "Late-Stage Pregnancy Guide",
       icon: "",
-      description: "Comprehensive week-by-week guidance for a healthy pregnancy journey",
-      content: `Our Pregnancy Health Guide provides detailed information about each stage of your pregnancy.
-      From nutritional advice to exercise recommendations, we ensure you're well-informed about the changes
-      happening in your body and your baby's development. Get weekly updates, health tips, and expert advice
-      tailored to your pregnancy stage.`,
+      description: "Essential tips and guidance for navigating the final weeks of pregnancy.",
+      content: `The final weeks of pregnancy can be a mix of excitement and exhaustion as your body prepares for labor. Our Late-Stage Pregnancy Guide offers essential insights to help you stay comfortable, informed, and prepared.
+
+What to Expect in Late Pregnancy
+• Baby's Positioning: Your baby will start settling into the head-down position, preparing for birth
+• Increased Discomfort: Back pain, pelvic pressure, swollen feet, and shortness of breath are common
+• Fatigue & Sleep Struggles: Your growing belly may make it difficult to sleep—try side sleeping with pillows for support
+• Braxton Hicks vs. Real Contractions: Learn how to distinguish between practice contractions and actual labor
+• Emotional Changes: You may feel anxious, excited, or even a little impatient—this is completely normal
+
+Final Preparations
+• Packing Your Hospital Bag: Essentials include comfy clothes, baby items, documents, and personal care products
+• Preparing Your Home: Set up the nursery, stock up on postpartum care supplies, and organize baby essentials
+• Knowing When to Go to the Hospital: Learn the signs of active labor, water breaking, and when to contact your healthcare provider
+
+Being well-informed helps you feel more confident and in control as labor approaches.`,
       images: {
         main: "/images/pregnancy-guide-main.jpg",
-        secondary: "/images/pregnancy-guide-secondary.jpg",
-        decorative: "/images/backgrounds/pregnancy-guide-bg.svg"
       },
       theme: {
         background: "linear-gradient(45deg, #f3e7ff 0%, #ffffff 100%)",
@@ -174,17 +189,29 @@ function HomePage() {
       }
     },
     {
-      id: 'community',
+      id: 'community-support',
       title: "Community Support",
       icon: "",
-      description: "Connect with other expectant mothers and share experiences",
-      content: `Join our supportive community of expectant mothers, experienced parents, and healthcare
-      professionals. Share your journey, ask questions, and get advice from others who understand what
-      you're going through. Participate in group discussions, virtual meetups, and educational sessions.`,
+      description: "Connect with other expectant mothers and find support during your pregnancy journey.",
+      content: `Having a strong support system is crucial during late pregnancy. Our community offers various ways to connect and share experiences.
+
+Support Resources
+• Peer Support Groups: Connect with other expectant mothers in your area
+• Partner Resources: Information to help your partner understand and support you
+• Online Forums: Safe spaces to discuss concerns and share experiences
+• Local Support Services: Access to pregnancy support services in your community
+
+Expert Q&A
+• Common Late Pregnancy Concerns: Expert answers to frequently asked questions
+• Medical Guidance: When to contact your healthcare provider
+• Birth Plan Support: Help with creating and understanding birth plans
+
+Emergency Resources
+• 24/7 Support Lines: Access to medical professionals when needed
+• Warning Signs: Know when to seek immediate medical attention
+• Hospital Information: Important contacts and locations for emergencies`,
       images: {
         main: "/images/community-main.jpg",
-        secondary: "/images/community-secondary.jpg",
-        decorative: "/images/backgrounds/community-bg.svg"
       },
       theme: {
         background: "linear-gradient(45deg, #e7f5ff 0%, #ffffff 100%)",
@@ -195,14 +222,18 @@ function HomePage() {
       id: 'expert-qa',
       title: "Expert Q&A",
       icon: "",
-      description: "Get answers from certified healthcare professionals",
-      content: `Access our panel of certified healthcare professionals including obstetricians, midwives,
-      and maternal health specialists. Submit your questions and receive expert answers within 24 hours.
-      Browse our extensive Q&A archive for immediate access to common pregnancy-related concerns.`,
+      description: "Get rapid medical consultations from professionals when you need them.",
+      content: `Have pregnancy concerns but don't want to wait for your next doctor's appointment? Our Expert Q&A section provides direct access to medical professionals, ensuring you receive reliable, quick answers when you need them.
+
+Common Topics Covered
+• Signs of Labor: Is it time to go to the hospital? Learn how to recognize true labor
+• Unusual Symptoms: Worried about pain, swelling, or sudden changes? Get expert advice fast
+• Medications & Safe Remedies: Know which medications and natural remedies are safe for late pregnancy
+• Labor Pain Management: Explore different options, from breathing techniques to epidurals
+
+When it comes to pregnancy, peace of mind is priceless—get trustworthy guidance, fast.`,
       images: {
         main: "/images/expert-qa-main.jpg",
-        secondary: "/images/expert-qa-secondary.jpg",
-        decorative: "/images/backgrounds/expert-qa-bg.svg"
       },
       theme: {
         background: "linear-gradient(45deg, #ecfdf5 0%, #ffffff 100%)",
@@ -213,51 +244,72 @@ function HomePage() {
       id: 'emergency',
       title: "Emergency Resources",
       icon: "",
-      description: "Quick access to emergency information and contacts",
-      content: `Our emergency resources section provides quick access to vital information when you need
-      it most. Find nearby hospitals, emergency contact numbers, and guidelines for identifying urgent
-      pregnancy-related situations. We also provide a printable emergency card with your key medical information.`,
+      description: "Access critical emergency response tools for labor and late pregnancy.",
+      content: `No one expects emergencies, but being prepared can make all the difference. Our Emergency Resources section helps you act quickly and confidently if unexpected situations arise.
+
+Key Resources Available
+• When to Seek Immediate Medical Help: Know the warning signs of serious conditions like pre-eclampsia, placental abruption, or preterm labor
+• Hospital & Birthing Center Information: Locate the nearest maternity facilities and plan your route
+• Emergency Contacts & Hotlines: Have important phone numbers ready for medical emergencies
+• What to Do If Labor Starts Unexpectedly: Learn what steps to take if labor begins before you reach the hospital
+
+With the right preparation, you can handle any situation with confidence and clarity.`,
       images: {
         main: "/images/emergency-main.jpg",
-        secondary: "/images/emergency-secondary.jpg",
-        decorative: "/images/backgrounds/emergency-bg.svg"
       },
       theme: {
-        background: "linear-gradient(45deg, #fff1f2 0%, #ffffff 100%)",
-        accent: "rgba(225, 29, 72, 0.1)"
+        background: "linear-gradient(45deg, #f0fdf4 0%, #ffffff 100%)",
+        accent: "rgba(34, 197, 94, 0.1)"
       }
     },
     {
       id: 'exercise',
       title: "Exercise Plans",
       icon: "",
-      description: "Safe and effective pregnancy workout routines",
-      content: `Stay active with our pregnancy-safe exercise plans designed by prenatal fitness experts.
-      Access video demonstrations of gentle exercises, yoga poses, and stretching routines suitable for
-      each trimester. Our exercise plans adapt to your changing needs and energy levels throughout pregnancy.`,
+      description: "Safe, doctor-recommended movements to ease discomfort and prepare for labor.",
+      content: `Gentle movement can reduce pregnancy discomfort, improve circulation, and help prepare your body for labor. Our Exercise Plans focus on safe, doctor-approved workouts tailored for the final weeks of pregnancy.
+
+Safe & Effective Exercises for Late Pregnancy
+• Pelvic Tilts & Cat-Cow Stretches: Helps with back pain and promotes better posture
+• Deep Squats & Hip Openers: Strengthens the pelvic floor and may encourage labor
+• Prenatal Yoga & Breathing Exercises: Increases flexibility, reduces stress, and improves labor endurance
+• Walking & Light Cardio: Helps baby descend into position and keeps your energy up
+
+Benefits of Staying Active
+• Reduces swelling, back pain, and tension
+• Improves flexibility and stamina for labor
+• Helps with better sleep and mood stabilization
+
+Movement is medicine—even simple exercises can make labor easier and boost overall well-being.`,
       images: {
         main: "/images/exercise-main.jpg",
-        secondary: "/images/exercise-secondary.jpg",
-        decorative: "/images/backgrounds/exercise-bg.svg"
       },
       theme: {
-        background: "linear-gradient(45deg, #faf5ff 0%, #ffffff 100%)",
-        accent: "rgba(168, 85, 247, 0.1)"
+        background: "linear-gradient(45deg, #ecfdf5 0%, #ffffff 100%)",
+        accent: "rgba(16, 185, 129, 0.1)"
       }
     },
     {
       id: 'nutrition',
       title: "Nutrition Advice",
       icon: "",
-      description: "Healthy eating guidelines for pregnancy",
-      content: `Get expert nutrition advice tailored for pregnancy. Find meal plans, recipes, and
-      guidelines for essential nutrients. Learn about foods to avoid, safe supplements, and how to
-      manage common pregnancy-related dietary challenges. Our nutrition guides help ensure you and
-      your baby get the nutrients you need.`,
+      description: "Expert-backed diet tips to support both mom and baby in the final stretch.",
+      content: `Eating the right foods in late pregnancy can boost energy, strengthen immunity, and prepare your body for labor. Our Nutrition Advice section provides tailored guidance on what to eat and avoid in the final trimester.
+
+Best Foods for Late Pregnancy
+• Iron-Rich Foods: Spinach, lean meats, and legumes prevent anemia and boost oxygen flow to your baby
+• Protein & Healthy Fats: Eggs, nuts, and fish support brain development and energy levels
+• Fiber & Hydration: Whole grains, fruits, and plenty of water help with digestion and prevent constipation
+• Labor-Boosting Foods: Dates, pineapple, and spicy foods may help naturally encourage contractions
+
+Foods to Avoid
+• Excess Caffeine & Sugar: Can cause energy crashes and affect fetal development
+• Raw or Undercooked Foods: Avoid raw fish, deli meats, and unpasteurized dairy to prevent infections
+• Overly Salty & Processed Foods: Can contribute to bloating and high blood pressure
+
+By making smart food choices, you can nourish both yourself and your baby in the final stretch.`,
       images: {
         main: "/images/nutrition-main.jpg",
-        secondary: "/images/nutrition-secondary.jpg",
-        decorative: "/images/backgrounds/nutrition-bg.svg"
       },
       theme: {
         background: "linear-gradient(45deg, #f0fdf4 0%, #ffffff 100%)",
@@ -341,7 +393,7 @@ function HomePage() {
             ].map((feature, index) => (
               <motion.div
                 key={index}
-                className="bg-white p-6 rounded-lg shadow-lg"
+                className="bg-white p-6 rounded-lg"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -366,18 +418,26 @@ function HomePage() {
             {careCategories.map((category, index) => (
               <motion.div 
                 key={index} 
-                className="bg-white rounded-lg p-6 shadow-lg"
+                className="bg-white rounded-xl p-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <h3 className="text-xl font-semibold mb-2">{category.title}</h3>
-                <p className="text-gray-600 mb-4">{category.description}</p>
+                <h3 className="text-2xl font-semibold mb-3 text-primary">{category.title}</h3>
+                <p className="text-gray-600 mb-4 leading-relaxed">{category.description}</p>
                 <button
                   onClick={() => scrollToSection(category.id)}
-                  className="text-primary hover:text-primary-dark font-medium"
+                  className="text-primary hover:text-primary-dark font-medium inline-flex items-center group"
                 >
-                  Explore →
+                  <span>Explore</span>
+                  <svg 
+                    className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform duration-200" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </button>
               </motion.div>
             ))}
@@ -391,14 +451,14 @@ function HomePage() {
           <motion.section
             key={category.id}
             id={category.id}
-            className="min-h-screen relative overflow-hidden"
+            className="min-h-screen relative overflow-hidden py-20"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
           >
             {/* Section Background */}
             <div 
-              className="absolute inset-0 pointer-events-none"
+              className="absolute inset-0 pointer-events-none opacity-50"
               style={{
                 background: category.theme.background
               }}
@@ -411,7 +471,7 @@ function HomePage() {
                 backgroundImage: `url(${category.images.decorative})`,
                 backgroundSize: '400px 400px',
                 backgroundRepeat: 'repeat',
-                opacity: 0.15
+                opacity: 0.1
               }}
             />
 
@@ -431,87 +491,45 @@ function HomePage() {
             </div>
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 py-24 relative">
-              <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${index % 2 === 0 ? '' : 'lg:flex-row-reverse'}`}>
+            <div className="max-w-7xl mx-auto px-6 relative">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 {/* Text Content */}
-                <div className="space-y-8">
-                  <motion.h2 
-                    className="text-5xl font-bold text-primary"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                  >
-                    {category.title}
-                  </motion.h2>
-                  <motion.p 
-                    className="text-xl text-gray-700 leading-relaxed"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    {category.content}
-                  </motion.p>
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    <button
-                      onClick={() => scrollToSection('comprehensive-care')}
-                      className="text-primary hover:text-primary-dark font-medium flex items-center space-x-2"
-                    >
-                      <span>↑ Back to Categories</span>
-                    </button>
-                  </motion.div>
+                <div className="space-y-8 bg-white/80 backdrop-blur-sm rounded-2xl p-8">
+                  <h2 className="text-4xl font-bold text-primary mb-6">{category.title}</h2>
+                  <div className="prose prose-lg max-w-none">
+                    {category.content.split('\n\n').map((paragraph, idx) => (
+                      <div key={idx} className="mb-6">
+                        {paragraph.startsWith('•') ? (
+                          <ul className="list-disc list-inside space-y-2">
+                            {paragraph.split('\n').map((item, i) => (
+                              <li key={i} className="text-gray-700 leading-relaxed">
+                                {item.replace('•', '').trim()}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-gray-700 leading-relaxed">{paragraph}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-
-                {/* Images */}
+                
+                {/* Image Content */}
                 <div className="relative">
-                  {/* Main Image */}
-                  <motion.div
-                    className="rounded-lg overflow-hidden shadow-2xl"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <div className="aspect-w-16 aspect-h-9 bg-gray-200">
-                      <img
-                        src={category.images.main}
-                        alt={`${category.title} main`}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                  </motion.div>
-
-                  {/* Secondary Image - Floating */}
-                  <motion.div
-                    className="absolute -bottom-8 -right-8 w-2/3 rounded-lg overflow-hidden shadow-xl"
-                    initial={{ opacity: 0, x: 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    <div className="aspect-w-4 aspect-h-3 bg-gray-200">
-                      <img
-                        src={category.images.secondary}
-                        alt={`${category.title} detail`}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                  </motion.div>
-
-                  {/* Decorative Elements */}
-                  <div className="absolute -left-4 -top-4 w-24 h-24 bg-primary/10 rounded-full" />
-                  <div className="absolute -right-8 top-1/2 w-16 h-16 bg-primary/10 rounded-full" />
+                  <div className="aspect-w-4 aspect-h-3 rounded-2xl overflow-hidden">
+                    <img 
+                      src={category.images.main} 
+                      alt={category.title}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Navigation Dots */}
-            <div className="fixed right-8 top-1/2 transform -translate-y-1/2 space-y-4 z-50">
+            <div className="fixed right-8 top-1/2 transform -translate-y-1/2 space-y-4 z-50 hidden lg:block">
               {careCategories.map((cat, idx) => (
                 <button
                   key={cat.id}

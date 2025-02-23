@@ -1,146 +1,173 @@
-import { motion } from "framer-motion";
-import React, { useState, useCallback } from "react";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
-export default function UltrasoundUpload() {
-  const [isDragging, setIsDragging] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [error, setError] = useState("");
+function UltrasoundUpload() {
+  const [file, setFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const handleDrag = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setIsDragging(true);
-    } else if (e.type === "dragleave") {
-      setIsDragging(false);
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setPreviewUrl(URL.createObjectURL(selectedFile));
+      setError(null);
     }
-  }, []);
-
-  const validateFile = (file) => {
-    const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-    const maxSize = 10 * 1024 * 1024; // 10MB
-
-    if (!validTypes.includes(file.type)) {
-      setError("Please upload only JPG, PNG, or PDF files");
-      return false;
-    }
-
-    if (file.size > maxSize) {
-      setError("File size must be less than 10MB");
-      return false;
-    }
-
-    return true;
   };
 
-  const handleDrop = useCallback((e) => {
+  const handleDrop = (e) => {
     e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-    setError("");
-
-    const file = e.dataTransfer.files[0];
-    if (file && validateFile(file)) {
-      setSelectedFile(file);
-    }
-  }, []);
-
-  const handleFileSelect = (e) => {
-    setError("");
-    const file = e.target.files[0];
-    if (file && validateFile(file)) {
-      setSelectedFile(file);
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile && droppedFile.type.startsWith('image/')) {
+      setFile(droppedFile);
+      setPreviewUrl(URL.createObjectURL(droppedFile));
+      setError(null);
+    } else {
+      setError('Please drop an image file');
     }
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) {
-      setError("Please select a file first");
+    if (!file) {
+      setError('Please select a file first');
       return;
     }
-    // TODO: Implement file upload logic here
-    console.log("Uploading file:", selectedFile);
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('http://localhost:8001/process-ultrasound', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.detail || 'Failed to process ultrasound image');
+      }
+
+      // Navigate to the Result page with the analysis data
+      navigate('/result', { 
+        state: { 
+          result: {
+            id: result.id,
+            class_prediction: result.class_prediction,
+            precise_prediction: result.precise_prediction,
+            timestamp: result.timestamp,
+            image_url: previewUrl // Pass the preview URL for immediate display
+          }
+        }
+      });
+
+    } catch (err) {
+      console.error('Upload error:', err);
+      setError(err.message || 'Failed to upload image');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <motion.div 
-      className="min-h-screen pt-20 px-6 bg-gray-50"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-primary mb-8">Upload Ultrasound</h1>
-        
-        <div className="bg-white p-8 rounded-lg shadow-soft">
+    <div className="min-h-screen py-12 px-4">
+      <div className="max-w-3xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-lg shadow-lg p-8"
+        >
+          <h1 className="text-3xl font-bold text-primary mb-6">Upload Ultrasound Image</h1>
+
+          {/* Drop Zone */}
           <div
-            className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors
-              ${isDragging ? "border-primary bg-primary/5" : "border-gray-300"}
-              ${error ? "border-red-500" : ""}`}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
             onDrop={handleDrop}
+            onDragOver={(e) => e.preventDefault()}
+            className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6 hover:border-primary transition-colors"
           >
             <input
               type="file"
+              accept="image/*"
+              onChange={handleFileChange}
               className="hidden"
-              id="ultrasound-upload"
-              accept=".jpg,.jpeg,.png,.pdf"
-              onChange={handleFileSelect}
+              id="fileInput"
             />
-            <div className="flex flex-col items-center">
-              <span className="text-6xl mb-4">
-                {selectedFile ? "📄" : "📤"}
-              </span>
-              <span className="text-xl font-bold text-primary mb-2">
-                {selectedFile 
-                  ? `Selected: ${selectedFile.name}`
-                  : "Drop your ultrasound file here"}
-              </span>
-              <span className="text-gray-500 mb-4">
-                Drag and drop or use the button below
-              </span>
-              {!selectedFile && (
-                <label
-                  htmlFor="ultrasound-upload"
-                  className="btn-primary cursor-pointer"
-                >
-                  Select File
-                </label>
+            <label
+              htmlFor="fileInput"
+              className="cursor-pointer block"
+            >
+              {previewUrl ? (
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  className="max-h-64 mx-auto mb-4"
+                />
+              ) : (
+                <div className="text-gray-500">
+                  <p className="mb-2">Drag and drop your ultrasound image here</p>
+                  <p>or click to select a file</p>
+                </div>
               )}
-            </div>
+            </label>
           </div>
 
+          {/* Error Message */}
           {error && (
-            <div className="mt-4 p-4 bg-red-50 text-red-600 rounded-lg">
+            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg">
               {error}
             </div>
           )}
 
-          {selectedFile && (
-            <div className="mt-4 flex justify-center">
-              <button 
-                className="btn-primary"
-                onClick={handleUpload}
-              >
-                Upload File
-              </button>
-            </div>
-          )}
-          
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold text-primary mb-4">Upload Guidelines</h2>
-            <ul className="list-disc list-inside space-y-2 text-gray-700">
-              <li>Ensure the image is clear and well-lit</li>
-              <li>Include the full ultrasound image</li>
-              <li>Make sure the date is visible</li>
-              <li>Maximum file size: 10MB</li>
-              <li>Accepted formats: JPG, PNG, PDF</li>
-            </ul>
+          {/* Upload Button */}
+          <div className="flex justify-end">
+            <button
+              onClick={handleUpload}
+              disabled={!file || loading}
+              className={`px-6 py-2 rounded-lg ${
+                loading
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-primary text-white hover:bg-primary-dark'
+              } transition-colors`}
+            >
+              {loading ? (
+                <span className="flex items-center">
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Processing...
+                </span>
+              ) : (
+                'Analyze Image'
+              )}
+            </button>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 }
+
+export default UltrasoundUpload;
